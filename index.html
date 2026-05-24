@@ -1,44 +1,100 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>João Silva</title>
+    <title>Jogo de Tiro</title>
+
     <style>
         body {
+            margin: 0;
+            overflow: hidden;
+            background: #111;
             font-family: Arial;
-            text-align: center;
-            background: linear-gradient(to right, #1e3c72, #2a5298);
             color: white;
-            margin-top: 100px;
         }
 
-        button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #ffcc00;
-            color: black;
-            font-size: 16px;
+        #player {
+            width: 50px;
+            height: 50px;
+            background: blue;
+            position: absolute;
+            left: 100px;
+            top: 100px;
+        }
+
+        .enemy {
+            width: 40px;
+            height: 40px;
+            background: red;
+            position: absolute;
             cursor: pointer;
-            border-radius: 5px;
         }
 
-        button:hover {
-            background-color: #ffaa00;
+        #score {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
         }
     </style>
 </head>
+
 <body>
 
-    <h1>🚀 João Silva</h1>
-    <p>Construindo minha jornada no digital</p>
+    <div id="score">Pontos: 0</div>
 
-    <button onclick="mostrarMensagem()">Clique aqui</button>
-
-    <p id="mensagem"></p>
+    <div id="player"></div>
 
     <script>
-        function mostrarMensagem() {
-            document.getElementById("mensagem").innerText = "Você está evoluindo! 🔥";
+
+        let score = 0;
+
+        const player = document.getElementById("player");
+
+        let x = 100;
+        let y = 100;
+
+        // Movimento do jogador
+        document.addEventListener("keydown", (event) => {
+
+            if(event.key === "w") y -= 10;
+            if(event.key === "s") y += 10;
+            if(event.key === "a") x -= 10;
+            if(event.key === "d") x += 10;
+
+            player.style.left = x + "px";
+            player.style.top = y + "px";
+
+        });
+
+        // Criar inimigos
+        function createEnemy() {
+
+            const enemy = document.createElement("div");
+
+            enemy.classList.add("enemy");
+
+            enemy.style.left = Math.random() * window.innerWidth + "px";
+            enemy.style.top = Math.random() * window.innerHeight + "px";
+
+            document.body.appendChild(enemy);
+
+            // Destruir inimigo
+            enemy.addEventListener("click", () => {
+
+                enemy.remove();
+
+                score++;
+
+                document.getElementById("score").innerText =
+                    "Pontos: " + score;
+
+            });
+
         }
+
+        // Criar vários inimigos
+        setInterval(createEnemy, 1000);
+
     </script>
 
 </body>
