@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Jogo de Tiro</title>
+    <title>Jogo de Sobrevivência</title>
 
     <style>
         body {
@@ -15,10 +15,11 @@
         #player {
             width: 50px;
             height: 50px;
-            background: blue;
+            background: cyan;
             position: absolute;
             left: 100px;
             top: 100px;
+            border-radius: 10px;
         }
 
         .enemy {
@@ -26,7 +27,7 @@
             height: 40px;
             background: red;
             position: absolute;
-            cursor: pointer;
+            border-radius: 10px;
         }
 
         #score {
@@ -35,31 +36,54 @@
             left: 10px;
             font-size: 24px;
         }
+
+        #life {
+            position: fixed;
+            top: 50px;
+            left: 10px;
+            font-size: 24px;
+        }
+
+        #gameover {
+            position: fixed;
+            top: 40%;
+            width: 100%;
+            text-align: center;
+            font-size: 60px;
+            display: none;
+            color: red;
+        }
     </style>
 </head>
 
 <body>
 
     <div id="score">Pontos: 0</div>
+    <div id="life">Vida: 5</div>
+
+    <div id="gameover">GAME OVER</div>
 
     <div id="player"></div>
 
     <script>
-
-        let score = 0;
 
         const player = document.getElementById("player");
 
         let x = 100;
         let y = 100;
 
-        // Movimento do jogador
+        let score = 0;
+        let life = 5;
+
+        let enemies = [];
+
+        // Movimento
         document.addEventListener("keydown", (event) => {
 
-            if(event.key === "w") y -= 10;
-            if(event.key === "s") y += 10;
-            if(event.key === "a") x -= 10;
-            if(event.key === "d") x += 10;
+            if(event.key === "w") y -= 15;
+            if(event.key === "s") y += 15;
+            if(event.key === "a") x -= 15;
+            if(event.key === "d") x += 15;
 
             player.style.left = x + "px";
             player.style.top = y + "px";
@@ -73,15 +97,26 @@
 
             enemy.classList.add("enemy");
 
-            enemy.style.left = Math.random() * window.innerWidth + "px";
-            enemy.style.top = Math.random() * window.innerHeight + "px";
+            let enemyX = Math.random() * window.innerWidth;
+            let enemyY = Math.random() * window.innerHeight;
+
+            enemy.style.left = enemyX + "px";
+            enemy.style.top = enemyY + "px";
 
             document.body.appendChild(enemy);
 
-            // Destruir inimigo
+            enemies.push({
+                element: enemy,
+                x: enemyX,
+                y: enemyY
+            });
+
+            // Clique para destruir
             enemy.addEventListener("click", () => {
 
                 enemy.remove();
+
+                enemies = enemies.filter(e => e.element !== enemy);
 
                 score++;
 
@@ -92,8 +127,52 @@
 
         }
 
-        // Criar vários inimigos
-        setInterval(createEnemy, 1000);
+        // Movimento dos inimigos
+        function moveEnemies() {
+
+            enemies.forEach(enemy => {
+
+                if(enemy.x < x) enemy.x += 1;
+                if(enemy.x > x) enemy.x -= 1;
+
+                if(enemy.y < y) enemy.y += 1;
+                if(enemy.y > y) enemy.y -= 1;
+
+                enemy.element.style.left = enemy.x + "px";
+                enemy.element.style.top = enemy.y + "px";
+
+                // Colisão
+                if(
+                    Math.abs(enemy.x - x) < 40 &&
+                    Math.abs(enemy.y - y) < 40
+                ) {
+
+                    life--;
+
+                    document.getElementById("life").innerText =
+                        "Vida: " + life;
+
+                    enemy.element.remove();
+
+                    enemies = enemies.filter(e => e !== enemy);
+
+                    if(life <= 0) {
+
+                        document.getElementById("gameover").style.display = "block";
+
+                    }
+
+                }
+
+            });
+
+        }
+
+        // Criar inimigos continuamente
+        setInterval(createEnemy, 1500);
+
+        // Atualizar movimento
+        setInterval(moveEnemies, 20);
 
     </script>
 
