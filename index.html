@@ -1,46 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Jogo de Sobrevivência</title>
+    <title>Labirinto Shooter</title>
 
     <style>
+
         body {
             margin: 0;
             overflow: hidden;
             background: #111;
             font-family: Arial;
-            color: white;
         }
 
         #player {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             background: cyan;
             position: absolute;
             left: 100px;
             top: 100px;
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .enemy {
-            width: 40px;
-            height: 40px;
+            width: 35px;
+            height: 35px;
             background: red;
             position: absolute;
-            border-radius: 10px;
+            border-radius: 8px;
+        }
+
+        .bullet {
+            width: 10px;
+            height: 10px;
+            background: yellow;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .wall {
+            position: absolute;
+            background: gray;
         }
 
         #score {
             position: fixed;
             top: 10px;
             left: 10px;
+            color: white;
             font-size: 24px;
         }
 
         #life {
             position: fixed;
-            top: 50px;
+            top: 45px;
             left: 10px;
+            color: white;
             font-size: 24px;
         }
 
@@ -49,10 +64,11 @@
             top: 40%;
             width: 100%;
             text-align: center;
+            color: red;
             font-size: 60px;
             display: none;
-            color: red;
         }
+
     </style>
 </head>
 
@@ -60,10 +76,14 @@
 
     <div id="score">Pontos: 0</div>
     <div id="life">Vida: 5</div>
-
     <div id="gameover">GAME OVER</div>
 
     <div id="player"></div>
+
+    <!-- PAREDES -->
+    <div class="wall" style="width:300px;height:20px;top:200px;left:200px;"></div>
+    <div class="wall" style="width:20px;height:250px;top:200px;left:500px;"></div>
+    <div class="wall" style="width:250px;height:20px;top:450px;left:250px;"></div>
 
     <script>
 
@@ -76,6 +96,7 @@
         let life = 5;
 
         let enemies = [];
+        let bullets = [];
 
         // Movimento
         document.addEventListener("keydown", (event) => {
@@ -88,7 +109,70 @@
             player.style.left = x + "px";
             player.style.top = y + "px";
 
+            // TIRO
+            if(event.key === " ") {
+
+                createBullet();
+
+            }
+
         });
+
+        // Criar tiro
+        function createBullet() {
+
+            const bullet = document.createElement("div");
+
+            bullet.classList.add("bullet");
+
+            bullet.style.left = (x + 15) + "px";
+            bullet.style.top = (y + 15) + "px";
+
+            document.body.appendChild(bullet);
+
+            bullets.push({
+                element: bullet,
+                x: x + 15,
+                y: y + 15
+            });
+
+        }
+
+        // Movimento do tiro
+        function moveBullets() {
+
+            bullets.forEach((bullet, index) => {
+
+                bullet.x += 10;
+
+                bullet.element.style.left = bullet.x + "px";
+
+                // Colisão com inimigos
+                enemies.forEach((enemy, enemyIndex) => {
+
+                    if(
+                        Math.abs(bullet.x - enemy.x) < 30 &&
+                        Math.abs(bullet.y - enemy.y) < 30
+                    ) {
+
+                        enemy.element.remove();
+                        bullet.element.remove();
+
+                        enemies.splice(enemyIndex, 1);
+                        bullets.splice(index, 1);
+
+                        score++;
+
+                        document.getElementById("score").innerText =
+                            "Pontos: " + score;
+
+                    }
+
+                });
+
+            });
+
+        }
 
         // Criar inimigos
         function createEnemy() {
@@ -111,26 +195,12 @@
                 y: enemyY
             });
 
-            // Clique para destruir
-            enemy.addEventListener("click", () => {
-
-                enemy.remove();
-
-                enemies = enemies.filter(e => e.element !== enemy);
-
-                score++;
-
-                document.getElementById("score").innerText =
-                    "Pontos: " + score;
-
-            });
-
         }
 
         // Movimento dos inimigos
         function moveEnemies() {
 
-            enemies.forEach(enemy => {
+            enemies.forEach((enemy, index) => {
 
                 if(enemy.x < x) enemy.x += 1;
                 if(enemy.x > x) enemy.x -= 1;
@@ -141,20 +211,20 @@
                 enemy.element.style.left = enemy.x + "px";
                 enemy.element.style.top = enemy.y + "px";
 
-                // Colisão
+                // Colisão jogador
                 if(
-                    Math.abs(enemy.x - x) < 40 &&
-                    Math.abs(enemy.y - y) < 40
+                    Math.abs(enemy.x - x) < 35 &&
+                    Math.abs(enemy.y - y) < 35
                 ) {
+
+                    enemy.element.remove();
+
+                    enemies.splice(index, 1);
 
                     life--;
 
                     document.getElementById("life").innerText =
                         "Vida: " + life;
-
-                    enemy.element.remove();
-
-                    enemies = enemies.filter(e => e !== enemy);
 
                     if(life <= 0) {
 
@@ -168,11 +238,12 @@
 
         }
 
-        // Criar inimigos continuamente
-        setInterval(createEnemy, 1500);
+        // Spawn inimigos
+        setInterval(createEnemy, 2000);
 
-        // Atualizar movimento
+        // Atualizações
         setInterval(moveEnemies, 20);
+        setInterval(moveBullets, 20);
 
     </script>
 
