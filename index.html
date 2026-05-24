@@ -1,128 +1,308 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Shooter Boss Fight</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
+<title>Pixel Survival</title>
 
-        body{
-            margin:0;
-            overflow:hidden;
-            background:#111;
-            cursor:crosshair;
-            font-family:Arial;
-        }
+<style>
 
-        #player{
-            width:40px;
-            height:40px;
-            background:cyan;
-            position:absolute;
-            left:100px;
-            top:100px;
-            border-radius:8px;
-        }
+body{
+    margin:0;
+    overflow:hidden;
+    background:#181818;
+    font-family:Arial;
+    cursor:crosshair;
+}
 
-        .enemy{
-            width:35px;
-            height:35px;
-            background:red;
-            position:absolute;
-            border-radius:8px;
-        }
+/* MAPA */
 
-        #boss{
-            width:120px;
-            height:120px;
-            background:purple;
-            position:absolute;
-            left:900px;
-            top:300px;
-            border-radius:20px;
-        }
+#game{
+    width:100vw;
+    height:100vh;
+    position:relative;
 
-        .bullet{
-            width:12px;
-            height:12px;
-            background:yellow;
-            position:absolute;
-            border-radius:50%;
-        }
+    background:
+    linear-gradient(
+        90deg,
+        #1f1f1f 0px,
+        #1f1f1f 48px,
+        #222 48px,
+        #222 50px
+    ),
 
-        .explosion{
-            width:40px;
-            height:40px;
-            background:orange;
-            position:absolute;
-            border-radius:50%;
-        }
+    linear-gradient(
+        #1f1f1f 0px,
+        #1f1f1f 48px,
+        #222 48px,
+        #222 50px
+    );
 
-        #score{
-            position:fixed;
-            top:10px;
-            left:10px;
-            color:white;
-            font-size:24px;
-        }
+    background-size:50px 50px;
+}
 
-        #life{
-            position:fixed;
-            top:45px;
-            left:10px;
-            color:white;
-            font-size:24px;
-        }
+/* PLAYER */
 
-        #bosslife{
-            position:fixed;
-            top:80px;
-            left:10px;
-            color:violet;
-            font-size:24px;
-        }
+#player{
+    width:50px;
+    height:50px;
 
-        #gameover{
-            position:fixed;
-            top:40%;
-            width:100%;
-            text-align:center;
-            color:red;
-            font-size:60px;
-            display:none;
-        }
+    position:absolute;
+    left:100px;
+    top:100px;
 
-    </style>
+    image-rendering:pixelated;
+
+    background:
+    linear-gradient(to bottom,
+    #00ffff 0%,
+    #00ffff 25%,
+    #00bbbb 25%,
+    #00bbbb 100%);
+
+    border:4px solid #003344;
+
+    box-shadow:
+    0 0 15px cyan;
+}
+
+/* INIMIGO */
+
+.enemy{
+
+    width:45px;
+    height:45px;
+
+    position:absolute;
+
+    background:
+    linear-gradient(to bottom,
+    #ff4444 0%,
+    #ff4444 30%,
+    #880000 30%,
+    #880000 100%);
+
+    border:4px solid #330000;
+
+    image-rendering:pixelated;
+
+    box-shadow:
+    0 0 10px red;
+}
+
+/* BOSS */
+
+#boss{
+
+    width:130px;
+    height:130px;
+
+    position:absolute;
+
+    left:1000px;
+    top:300px;
+
+    background:
+    linear-gradient(to bottom,
+    #cc66ff 0%,
+    #cc66ff 30%,
+    #660099 30%,
+    #660099 100%);
+
+    border:6px solid #220033;
+
+    box-shadow:
+    0 0 25px violet;
+}
+
+/* TIROS */
+
+.bullet{
+
+    width:14px;
+    height:14px;
+
+    position:absolute;
+
+    background:yellow;
+
+    border-radius:50%;
+
+    box-shadow:
+    0 0 10px yellow;
+}
+
+/* EXPLOSÃO */
+
+.explosion{
+
+    width:60px;
+    height:60px;
+
+    position:absolute;
+
+    background:orange;
+
+    border-radius:50%;
+
+    box-shadow:
+    0 0 30px orange;
+
+    animation:explode 0.3s linear;
+}
+
+@keyframes explode{
+
+    from{
+        transform:scale(0.5);
+        opacity:1;
+    }
+
+    to{
+        transform:scale(2);
+        opacity:0;
+    }
+
+}
+
+/* PAREDES */
+
+.wall{
+    position:absolute;
+    background:#555;
+
+    border:4px solid #222;
+}
+
+/* HUD */
+
+#hud{
+
+    position:fixed;
+
+    top:10px;
+    left:10px;
+
+    color:white;
+
+    font-size:24px;
+
+    z-index:999;
+}
+
+#gameover{
+
+    position:fixed;
+
+    top:40%;
+
+    width:100%;
+
+    text-align:center;
+
+    color:red;
+
+    font-size:90px;
+
+    text-shadow:
+    5px 5px black,
+    0 0 20px red;
+
+    display:none;
+
+    z-index:999;
+}
+
+/* MINI DETALHES */
+
+.tree{
+
+    width:60px;
+    height:60px;
+
+    position:absolute;
+
+    background:green;
+
+    border-radius:50%;
+
+    box-shadow:
+    inset -10px -10px darkgreen;
+}
+
+.rock{
+
+    width:50px;
+    height:50px;
+
+    position:absolute;
+
+    background:#777;
+
+    border-radius:10px;
+}
+
+</style>
 </head>
 
 <body>
 
-<div id="score">Pontos: 0</div>
-<div id="life">Vida: 5</div>
-<div id="bosslife">Boss Vida: 20</div>
+<div id="hud">
+    ❤️ Vida: <span id="life">5</span><br>
+    🎯 Pontos: <span id="score">0</span><br>
+    👹 Boss: <span id="bosslife">30</span>
+</div>
 
 <div id="gameover">GAME OVER</div>
 
-<div id="player"></div>
+<div id="game">
 
-<div id="boss"></div>
+    <div id="player"></div>
+
+    <div id="boss"></div>
+
+    <!-- LABIRINTO -->
+
+    <div class="wall" style="width:400px;height:30px;top:200px;left:250px;"></div>
+
+    <div class="wall" style="width:30px;height:300px;top:200px;left:650px;"></div>
+
+    <div class="wall" style="width:350px;height:30px;top:500px;left:300px;"></div>
+
+    <div class="wall" style="width:30px;height:250px;top:100px;left:900px;"></div>
+
+    <!-- DETALHES MAPA -->
+
+    <div class="tree" style="top:100px;left:500px;"></div>
+
+    <div class="tree" style="top:600px;left:1200px;"></div>
+
+    <div class="rock" style="top:400px;left:1100px;"></div>
+
+</div>
 
 <script>
 
-let player = document.getElementById("player");
-let boss = document.getElementById("boss");
+const player = document.getElementById("player");
+const boss = document.getElementById("boss");
 
 let x = 100;
 let y = 100;
 
+let mouseX = 0;
+let mouseY = 0;
+
 let score = 0;
 let life = 5;
-let bossLife = 20;
+let bossLife = 30;
 
 let bullets = [];
 let enemies = [];
 
-let mouseX = 0;
-let mouseY = 0;
+let gameOver = false;
+
+/* MOUSE */
 
 document.addEventListener("mousemove",(event)=>{
 
@@ -131,51 +311,62 @@ document.addEventListener("mousemove",(event)=>{
 
 });
 
-// MOVIMENTO
+/* MOVIMENTO */
+
 document.addEventListener("keydown",(event)=>{
 
-    if(event.key==="w") y -= 15;
-    if(event.key==="s") y += 15;
-    if(event.key==="a") x -= 15;
-    if(event.key==="d") x += 15;
+    if(gameOver) return;
+
+    let speed = 15;
+
+    if(event.key==="w") y -= speed;
+    if(event.key==="s") y += speed;
+    if(event.key==="a") x -= speed;
+    if(event.key==="d") x += speed;
 
     player.style.left = x + "px";
     player.style.top = y + "px";
 
 });
 
-// TIRO COM MOUSE
+/* TIRO */
+
 document.addEventListener("click",()=>{
+
+    if(gameOver) return;
 
     createBullet();
 
 });
 
-// CRIAR TIRO
 function createBullet(){
 
     let bullet = document.createElement("div");
 
     bullet.classList.add("bullet");
 
-    bullet.style.left = (x+15)+"px";
-    bullet.style.top = (y+15)+"px";
+    bullet.style.left = (x+20)+"px";
+    bullet.style.top = (y+20)+"px";
 
-    document.body.appendChild(bullet);
+    document.getElementById("game").appendChild(bullet);
 
     let angle = Math.atan2(mouseY - y, mouseX - x);
 
     bullets.push({
-        element: bullet,
-        x: x+15,
-        y: y+15,
-        dx: Math.cos(angle)*10,
-        dy: Math.sin(angle)*10
+
+        element:bullet,
+        x:x+20,
+        y:y+20,
+
+        dx:Math.cos(angle)*12,
+        dy:Math.sin(angle)*12
+
     });
 
 }
 
-// MOVER TIROS
+/* MOVER TIROS */
+
 function moveBullets(){
 
     bullets.forEach((bullet,index)=>{
@@ -186,45 +377,76 @@ function moveBullets(){
         bullet.element.style.left = bullet.x + "px";
         bullet.element.style.top = bullet.y + "px";
 
-        // COLISÃO BOSS
+        /* COLISÃO BOSS */
+
         let bossX = parseInt(boss.style.left);
         let bossY = parseInt(boss.style.top);
 
         if(
+
             bullet.x > bossX &&
-            bullet.x < bossX + 120 &&
+            bullet.x < bossX + 130 &&
             bullet.y > bossY &&
-            bullet.y < bossY + 120
+            bullet.y < bossY + 130
+
         ){
 
+            createExplosion(bullet.x,bullet.y);
+
             bullet.element.remove();
+
             bullets.splice(index,1);
 
             bossLife--;
 
             document.getElementById("bosslife").innerText =
-                "Boss Vida: " + bossLife;
-
-            createExplosion(bossX+40,bossY+40);
+            bossLife;
 
             if(bossLife <= 0){
 
                 boss.remove();
 
-                score += 50;
+                score += 100;
 
-                document.getElementById("score").innerText =
-                    "Pontos: " + score;
+                updateHUD();
 
             }
 
         }
 
+        /* COLISÃO INIMIGOS */
+
+        enemies.forEach((enemy,eIndex)=>{
+
+            if(
+
+                Math.abs(bullet.x - enemy.x) < 30 &&
+                Math.abs(bullet.y - enemy.y) < 30
+
+            ){
+
+                createExplosion(enemy.x,enemy.y);
+
+                enemy.element.remove();
+                bullet.element.remove();
+
+                enemies.splice(eIndex,1);
+                bullets.splice(index,1);
+
+                score += 10;
+
+                updateHUD();
+
+            }
+
+        });
+
     });
 
 }
 
-// EXPLOSÃO
+/* EXPLOSÃO */
+
 function createExplosion(ex,ey){
 
     let explosion = document.createElement("div");
@@ -234,18 +456,21 @@ function createExplosion(ex,ey){
     explosion.style.left = ex + "px";
     explosion.style.top = ey + "px";
 
-    document.body.appendChild(explosion);
+    document.getElementById("game").appendChild(explosion);
 
     setTimeout(()=>{
 
         explosion.remove();
 
-    },200);
+    },300);
 
 }
 
-// CRIAR INIMIGOS
+/* CRIAR INIMIGOS */
+
 function createEnemy(){
+
+    if(gameOver) return;
 
     let enemy = document.createElement("div");
 
@@ -257,35 +482,43 @@ function createEnemy(){
     enemy.style.left = ex + "px";
     enemy.style.top = ey + "px";
 
-    document.body.appendChild(enemy);
+    document.getElementById("game").appendChild(enemy);
 
     enemies.push({
-        element: enemy,
-        x: ex,
-        y: ey
+
+        element:enemy,
+        x:ex,
+        y:ey
+
     });
 
 }
 
-// MOVER INIMIGOS
+/* MOVER INIMIGOS */
+
 function moveEnemies(){
 
     enemies.forEach((enemy,index)=>{
 
-        if(enemy.x < x) enemy.x += 1;
-        if(enemy.x > x) enemy.x -= 1;
+        if(enemy.x < x) enemy.x += 1.2;
+        if(enemy.x > x) enemy.x -= 1.2;
 
-        if(enemy.y < y) enemy.y += 1;
-        if(enemy.y > y) enemy.y -= 1;
+        if(enemy.y < y) enemy.y += 1.2;
+        if(enemy.y > y) enemy.y -= 1.2;
 
         enemy.element.style.left = enemy.x + "px";
         enemy.element.style.top = enemy.y + "px";
 
-        // COLISÃO PLAYER
+        /* COLISÃO PLAYER */
+
         if(
+
             Math.abs(enemy.x - x) < 35 &&
             Math.abs(enemy.y - y) < 35
+
         ){
+
+            createExplosion(x,y);
 
             enemy.element.remove();
 
@@ -293,13 +526,11 @@ function moveEnemies(){
 
             life--;
 
-            document.getElementById("life").innerText =
-                "Vida: " + life;
+            updateHUD();
 
             if(life <= 0){
 
-                document.getElementById("gameover").style.display =
-                    "block";
+                endGame();
 
             }
 
@@ -308,6 +539,29 @@ function moveEnemies(){
     });
 
 }
+
+/* HUD */
+
+function updateHUD(){
+
+    document.getElementById("life").innerText = life;
+
+    document.getElementById("score").innerText = score;
+
+}
+
+/* GAME OVER */
+
+function endGame(){
+
+    gameOver = true;
+
+    document.getElementById("gameover").style.display =
+    "block";
+
+}
+
+/* LOOP */
 
 setInterval(createEnemy,2000);
 
