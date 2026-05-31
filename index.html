@@ -4,570 +4,145 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Pixel Survival</title>
+<title>CPA Mentor AI</title>
 
 <style>
 
 body{
-    margin:0;
-    overflow:hidden;
-    background:#181818;
-    font-family:Arial;
-    cursor:crosshair;
-}
-
-/* MAPA */
-
-#game{
-    width:100vw;
-    height:100vh;
-    position:relative;
-
-    background:
-    linear-gradient(
-        90deg,
-        #1f1f1f 0px,
-        #1f1f1f 48px,
-        #222 48px,
-        #222 50px
-    ),
-
-    linear-gradient(
-        #1f1f1f 0px,
-        #1f1f1f 48px,
-        #222 48px,
-        #222 50px
-    );
-
-    background-size:50px 50px;
-}
-
-/* PLAYER */
-
-#player{
-    width:50px;
-    height:50px;
-
-    position:absolute;
-    left:100px;
-    top:100px;
-
-    image-rendering:pixelated;
-
-    background:
-    linear-gradient(to bottom,
-    #00ffff 0%,
-    #00ffff 25%,
-    #00bbbb 25%,
-    #00bbbb 100%);
-
-    border:4px solid #003344;
-
-    box-shadow:
-    0 0 15px cyan;
-}
-
-/* INIMIGO */
-
-.enemy{
-
-    width:45px;
-    height:45px;
-
-    position:absolute;
-
-    background:
-    linear-gradient(to bottom,
-    #ff4444 0%,
-    #ff4444 30%,
-    #880000 30%,
-    #880000 100%);
-
-    border:4px solid #330000;
-
-    image-rendering:pixelated;
-
-    box-shadow:
-    0 0 10px red;
-}
-
-/* BOSS */
-
-#boss{
-
-    width:130px;
-    height:130px;
-
-    position:absolute;
-
-    left:1000px;
-    top:300px;
-
-    background:
-    linear-gradient(to bottom,
-    #cc66ff 0%,
-    #cc66ff 30%,
-    #660099 30%,
-    #660099 100%);
-
-    border:6px solid #220033;
-
-    box-shadow:
-    0 0 25px violet;
-}
-
-/* TIROS */
-
-.bullet{
-
-    width:14px;
-    height:14px;
-
-    position:absolute;
-
-    background:yellow;
-
-    border-radius:50%;
-
-    box-shadow:
-    0 0 10px yellow;
-}
-
-/* EXPLOSÃO */
-
-.explosion{
-
-    width:60px;
-    height:60px;
-
-    position:absolute;
-
-    background:orange;
-
-    border-radius:50%;
-
-    box-shadow:
-    0 0 30px orange;
-
-    animation:explode 0.3s linear;
-}
-
-@keyframes explode{
-
-    from{
-        transform:scale(0.5);
-        opacity:1;
-    }
-
-    to{
-        transform:scale(2);
-        opacity:0;
-    }
-
-}
-
-/* PAREDES */
-
-.wall{
-    position:absolute;
-    background:#555;
-
-    border:4px solid #222;
-}
-
-/* HUD */
-
-#hud{
-
-    position:fixed;
-
-    top:10px;
-    left:10px;
-
+    font-family: Arial, sans-serif;
+    background:#0f172a;
     color:white;
-
-    font-size:24px;
-
-    z-index:999;
+    margin:0;
 }
 
-#gameover{
-
-    position:fixed;
-
-    top:40%;
-
-    width:100%;
-
+header{
     text-align:center;
-
-    color:red;
-
-    font-size:90px;
-
-    text-shadow:
-    5px 5px black,
-    0 0 20px red;
-
-    display:none;
-
-    z-index:999;
+    padding:30px;
+    background:#1e293b;
 }
 
-/* MINI DETALHES */
-
-.tree{
-
-    width:60px;
-    height:60px;
-
-    position:absolute;
-
-    background:green;
-
-    border-radius:50%;
-
-    box-shadow:
-    inset -10px -10px darkgreen;
+h1{
+    margin:0;
 }
 
-.rock{
+.container{
+    max-width:800px;
+    margin:auto;
+    padding:20px;
+}
 
-    width:50px;
-    height:50px;
+textarea{
+    width:100%;
+    height:120px;
+    border:none;
+    border-radius:10px;
+    padding:10px;
+    font-size:16px;
+}
 
-    position:absolute;
+button{
+    margin-top:10px;
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    background:#22c55e;
+    color:white;
+    font-size:16px;
+}
 
-    background:#777;
-
+#resposta{
+    margin-top:20px;
+    background:#1e293b;
+    padding:20px;
     border-radius:10px;
 }
 
 </style>
 </head>
-
 <body>
 
-<div id="hud">
-    ❤️ Vida: <span id="life">5</span><br>
-    🎯 Pontos: <span id="score">0</span><br>
-    👹 Boss: <span id="bosslife">30</span>
-</div>
+<header>
+    <h1>CPA Mentor AI</h1>
+    <p>Seu assistente para estudar CPA-20</p>
+</header>
 
-<div id="gameover">GAME OVER</div>
+<div class="container">
 
-<div id="game">
+    <h2>Faça uma pergunta:</h2>
 
-    <div id="player"></div>
+    <textarea id="pergunta"
+    placeholder="Ex: O que é um fundo de investimento?"></textarea>
 
-    <div id="boss"></div>
+    <br>
 
-    <!-- LABIRINTO -->
+    <button onclick="responder()">
+        Perguntar
+    </button>
 
-    <div class="wall" style="width:400px;height:30px;top:200px;left:250px;"></div>
-
-    <div class="wall" style="width:30px;height:300px;top:200px;left:650px;"></div>
-
-    <div class="wall" style="width:350px;height:30px;top:500px;left:300px;"></div>
-
-    <div class="wall" style="width:30px;height:250px;top:100px;left:900px;"></div>
-
-    <!-- DETALHES MAPA -->
-
-    <div class="tree" style="top:100px;left:500px;"></div>
-
-    <div class="tree" style="top:600px;left:1200px;"></div>
-
-    <div class="rock" style="top:400px;left:1100px;"></div>
+    <div id="resposta">
+        Digite uma pergunta sobre CPA-20.
+    </div>
 
 </div>
 
 <script>
 
-const player = document.getElementById("player");
-const boss = document.getElementById("boss");
+function responder(){
 
-let x = 100;
-let y = 100;
+    let pergunta =
+    document.getElementById("pergunta")
+    .value
+    .toLowerCase();
 
-let mouseX = 0;
-let mouseY = 0;
+    let resposta = "";
 
-let score = 0;
-let life = 5;
-let bossLife = 30;
+    if(pergunta.includes("fundo")){
 
-let bullets = [];
-let enemies = [];
+        resposta =
+        "Um fundo de investimento reúne recursos de diversos investidores para aplicação em ativos financeiros administrados por um gestor.";
 
-let gameOver = false;
+    }
 
-/* MOUSE */
+    else if(pergunta.includes("risco")){
 
-document.addEventListener("mousemove",(event)=>{
+        resposta =
+        "Risco é a possibilidade de perda financeira. Na CPA-20 os principais riscos são mercado, crédito, liquidez e operacional.";
 
-    mouseX = event.clientX;
-    mouseY = event.clientY;
+    }
 
-});
+    else if(pergunta.includes("tesouro")){
 
-/* MOVIMENTO */
+        resposta =
+        "Tesouro Direto é um programa que permite investir em títulos públicos federais.";
 
-document.addEventListener("keydown",(event)=>{
+    }
 
-    if(gameOver) return;
+    else if(pergunta.includes("cdb")){
 
-    let speed = 15;
+        resposta =
+        "CDB é um título emitido por bancos para captação de recursos. Possui cobertura do FGC dentro dos limites estabelecidos.";
 
-    if(event.key==="w") y -= speed;
-    if(event.key==="s") y += speed;
-    if(event.key==="a") x -= speed;
-    if(event.key==="d") x += speed;
+    }
 
-    player.style.left = x + "px";
-    player.style.top = y + "px";
+    else if(pergunta.includes("fgc")){
 
-});
+        resposta =
+        "FGC significa Fundo Garantidor de Créditos. Protege determinados investimentos até os limites vigentes.";
 
-/* TIRO */
+    }
 
-document.addEventListener("click",()=>{
+    else{
 
-    if(gameOver) return;
+        resposta =
+        "Ainda não conheço esse tema. Você pode adicionar novos assuntos diretamente no código.";
 
-    createBullet();
+    }
 
-});
-
-function createBullet(){
-
-    let bullet = document.createElement("div");
-
-    bullet.classList.add("bullet");
-
-    bullet.style.left = (x+20)+"px";
-    bullet.style.top = (y+20)+"px";
-
-    document.getElementById("game").appendChild(bullet);
-
-    let angle = Math.atan2(mouseY - y, mouseX - x);
-
-    bullets.push({
-
-        element:bullet,
-        x:x+20,
-        y:y+20,
-
-        dx:Math.cos(angle)*12,
-        dy:Math.sin(angle)*12
-
-    });
+    document.getElementById("resposta")
+    .innerHTML = resposta;
 
 }
-
-/* MOVER TIROS */
-
-function moveBullets(){
-
-    bullets.forEach((bullet,index)=>{
-
-        bullet.x += bullet.dx;
-        bullet.y += bullet.dy;
-
-        bullet.element.style.left = bullet.x + "px";
-        bullet.element.style.top = bullet.y + "px";
-
-        /* COLISÃO BOSS */
-
-        let bossX = parseInt(boss.style.left);
-        let bossY = parseInt(boss.style.top);
-
-        if(
-
-            bullet.x > bossX &&
-            bullet.x < bossX + 130 &&
-            bullet.y > bossY &&
-            bullet.y < bossY + 130
-
-        ){
-
-            createExplosion(bullet.x,bullet.y);
-
-            bullet.element.remove();
-
-            bullets.splice(index,1);
-
-            bossLife--;
-
-            document.getElementById("bosslife").innerText =
-            bossLife;
-
-            if(bossLife <= 0){
-
-                boss.remove();
-
-                score += 100;
-
-                updateHUD();
-
-            }
-
-        }
-
-        /* COLISÃO INIMIGOS */
-
-        enemies.forEach((enemy,eIndex)=>{
-
-            if(
-
-                Math.abs(bullet.x - enemy.x) < 30 &&
-                Math.abs(bullet.y - enemy.y) < 30
-
-            ){
-
-                createExplosion(enemy.x,enemy.y);
-
-                enemy.element.remove();
-                bullet.element.remove();
-
-                enemies.splice(eIndex,1);
-                bullets.splice(index,1);
-
-                score += 10;
-
-                updateHUD();
-
-            }
-
-        });
-
-    });
-
-}
-
-/* EXPLOSÃO */
-
-function createExplosion(ex,ey){
-
-    let explosion = document.createElement("div");
-
-    explosion.classList.add("explosion");
-
-    explosion.style.left = ex + "px";
-    explosion.style.top = ey + "px";
-
-    document.getElementById("game").appendChild(explosion);
-
-    setTimeout(()=>{
-
-        explosion.remove();
-
-    },300);
-
-}
-
-/* CRIAR INIMIGOS */
-
-function createEnemy(){
-
-    if(gameOver) return;
-
-    let enemy = document.createElement("div");
-
-    enemy.classList.add("enemy");
-
-    let ex = Math.random()*window.innerWidth;
-    let ey = Math.random()*window.innerHeight;
-
-    enemy.style.left = ex + "px";
-    enemy.style.top = ey + "px";
-
-    document.getElementById("game").appendChild(enemy);
-
-    enemies.push({
-
-        element:enemy,
-        x:ex,
-        y:ey
-
-    });
-
-}
-
-/* MOVER INIMIGOS */
-
-function moveEnemies(){
-
-    enemies.forEach((enemy,index)=>{
-
-        if(enemy.x < x) enemy.x += 1.2;
-        if(enemy.x > x) enemy.x -= 1.2;
-
-        if(enemy.y < y) enemy.y += 1.2;
-        if(enemy.y > y) enemy.y -= 1.2;
-
-        enemy.element.style.left = enemy.x + "px";
-        enemy.element.style.top = enemy.y + "px";
-
-        /* COLISÃO PLAYER */
-
-        if(
-
-            Math.abs(enemy.x - x) < 35 &&
-            Math.abs(enemy.y - y) < 35
-
-        ){
-
-            createExplosion(x,y);
-
-            enemy.element.remove();
-
-            enemies.splice(index,1);
-
-            life--;
-
-            updateHUD();
-
-            if(life <= 0){
-
-                endGame();
-
-            }
-
-        }
-
-    });
-
-}
-
-/* HUD */
-
-function updateHUD(){
-
-    document.getElementById("life").innerText = life;
-
-    document.getElementById("score").innerText = score;
-
-}
-
-/* GAME OVER */
-
-function endGame(){
-
-    gameOver = true;
-
-    document.getElementById("gameover").style.display =
-    "block";
-
-}
-
-/* LOOP */
-
-setInterval(createEnemy,2000);
-
-setInterval(moveEnemies,20);
-
-setInterval(moveBullets,20);
 
 </script>
 
