@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang='pt-BR'>
+<head>
+<meta charset='UTF-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<title>Portal Minecraft V1</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;overflow:hidden;background:linear-gradient(#7ec8ff 0 55%, #5fae4e 55% 100%);}
+h1{text-align:center;color:white;text-shadow:3px 3px black;}
+#msg{text-align:center;color:white;font-size:22px;text-shadow:2px 2px black;}
+#chest{width:140px;height:100px;background:#8b5a2b;border:6px solid #4a2a0a;position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);cursor:pointer;}
+#chest:before{content:'';position:absolute;left:0;right:0;top:0;height:25px;background:#a86b34;}
+#inventory{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;gap:6px;width:420px;justify-content:center;}
+.obsidian{width:42px;height:42px;background:#1c102a;border:3px solid #5d2d89;cursor:pointer;}
+#portal{position:absolute;right:120px;top:80px;display:grid;grid-template-columns:repeat(4,55px);grid-template-rows:repeat(4,55px);gap:6px;}
+.slot{width:55px;height:55px;border:2px dashed rgba(255,255,255,.5);}
+.filled{background:#1c102a;border:3px solid #5d2d89;}
+#success{display:none;position:absolute;top:40%;width:100%;text-align:center;font-size:48px;color:#b46cff;text-shadow:3px 3px black;}
+</style>
+</head>
+<body>
+<h1>🟣 Portal Minecraft</h1>
+<div id='msg'>Abra o baú para começar sua aventura.</div>
+<div id='chest'></div>
+<div id='portal'></div>
+<div id='inventory'></div>
+<div id='success'>PORTAL CONCLUÍDO! 🔥</div>
+<script>
+const portal=document.getElementById('portal');
+const inventory=document.getElementById('inventory');
+const chest=document.getElementById('chest');
+const success=document.getElementById('success');
+const msg=document.getElementById('msg');
+let preenchidos=0;
+const total=16;
+for(let i=0;i<16;i++){
+ const s=document.createElement('div');
+ s.className='slot';
+ portal.appendChild(s);
+}
+chest.onclick=()=>{
+ chest.style.display='none';
+ msg.innerText='Você encontrou 16 blocos de obsidiana. Construa o portal!';
+ for(let i=0;i<16;i++){
+   const b=document.createElement('div');
+   b.className='obsidian';
+   b.onclick=()=>{
+     const slots=document.querySelectorAll('.slot');
+     for(const slot of slots){
+       if(!slot.classList.contains('filled')){
+         slot.classList.add('filled');
+         b.remove();
+         preenchidos++;
+         break;
+       }
+     }
+     if(preenchidos===total){
+       success.style.display='block';
+       msg.innerText='Portal completo! Na próxima versão vamos acender o portal.';
+     }
+   };
+   inventory.appendChild(b);
+ }
+};
+</script>
+</body>
+</html>
